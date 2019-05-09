@@ -1,0 +1,7 @@
+FROM java:8-jdk
+RUN mkdir /app
+WORKDIR /app
+COPY build/libs/admin-dashboard.jar /app
+EXPOSE 8100
+CMD ["--spring.profiles.active=docker"]
+ENTRYPOINT ["java", "-jar", "/app/admin-dashboard.jar"]

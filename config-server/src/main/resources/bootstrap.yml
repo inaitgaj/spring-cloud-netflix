@@ -1,0 +1,99 @@
+server:
+  port: ${port:8100}
+spring:
+  application:
+    name: config-server
+  profiles: dev
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/inaitgaj/spring-cloud-netflix
+          search-paths:
+          - "config-properties/{application}/{profile}"
+          #native:
+          #search-locations: classpath:/config
+# can access specific properties according to profile (can be overriden in cmd --spring.profiles.active=prod
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: ALWAYS
+
+
+---
+server:
+  port: ${port:8100}
+spring:
+  application:
+    name: config-server
+  profiles: docker
+  rabbitmq:
+    host: some-rabbit
+    port: 5672
+    username: guest
+    password: guest
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/inaitgaj/spring-cloud-netflix
+          search-paths:
+          - "config-properties/{application}/{profile}"
+eureka:
+  instance:
+    hostname: config-server
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://eureka-server:8761/eureka/
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: ALWAYS
+#eureka:
+#  instance:
+#    hostname: config-server
+#    prefer-ip-address: true
+#  client:
+#    registerWithEureka: true
+#    fetchRegistry: true
+#    serviceUrl:
+#            defaultZone: http://eureka-server:8761/eureka/
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+#  endpoint:
+#    shutdown:
+#      enabled: true
+#    health:
+#      show-details: ALWAYS
+

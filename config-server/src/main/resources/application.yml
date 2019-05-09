@@ -1,0 +1,6 @@
+spring:
+  profiles: docker
+eureka:
+  client:
+    healthcheck:
+      enabled: false

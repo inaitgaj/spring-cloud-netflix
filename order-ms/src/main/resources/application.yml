@@ -1,0 +1,7 @@
+msg: Hello-orders-local
+spring:
+  profiles: docker
+eureka:
+  client:
+    healthcheck:
+      enabled: false

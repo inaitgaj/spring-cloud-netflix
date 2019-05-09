@@ -1,0 +1,7 @@
+FROM java:8-jdk
+RUN mkdir /app
+WORKDIR /app
+COPY build/libs/order-ms.jar /app
+EXPOSE 8070
+CMD ["--spring.profiles.active=docker"]
+ENTRYPOINT ["java", "-jar", "/app/order-ms.jar"]

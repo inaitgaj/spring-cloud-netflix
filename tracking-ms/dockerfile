@@ -1,0 +1,7 @@
+FROM java:8-jdk
+RUN mkdir /app
+WORKDIR /app
+COPY build/libs/tracking-ms.jar /app
+EXPOSE 8080
+CMD ["--spring.profiles.active=docker"]
+ENTRYPOINT ["java", "-jar", "/app/tracking-ms.jar"]
