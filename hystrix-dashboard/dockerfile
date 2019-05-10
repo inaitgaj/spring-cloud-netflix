@@ -1,0 +1,7 @@
+FROM java:8-jdk
+RUN mkdir /app
+WORKDIR /app
+COPY build/libs/hystrix-dashboard.jar /app
+EXPOSE 8050
+CMD ["--spring.profiles.active=docker"]
+ENTRYPOINT ["java", "-jar", "/app/hystrix-dashboard.jar"]

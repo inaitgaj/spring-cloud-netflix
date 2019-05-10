@@ -1,7 +1,7 @@
 FROM java:8-jdk
 RUN mkdir /app
 WORKDIR /app
-COPY build/libs/zuul.jar /app
+COPY build/libs/admin-server.jar /app
 EXPOSE 8060
 CMD ["--spring.profiles.active=docker"]
-ENTRYPOINT ["java", "-jar", "/app/zuul.jar"]
+ENTRYPOINT ["java", "-jar", "/app/admin-server.jar"]

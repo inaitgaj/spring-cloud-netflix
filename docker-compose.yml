@@ -1,0 +1,130 @@
+version: '2.1'
+services:
+  rabbitmq:
+    image: 'rabbitmq:3-management'
+    container_name: some-rabbit
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    mem_limit: 500m
+  eureka-server:
+    build:
+      context: eureka-server\.
+      dockerfile: dockerfile
+    image: inaitgaj/eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    mem_limit: 500m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      #start-period: 30s
+      interval: 30s
+      timeout: 15s
+      retries: 10
+  config-server:
+    build:
+      context: config-server\.
+      dockerfile: dockerfile
+    image: inaitgaj/config-server
+    container_name: config-server
+    ports:
+      - "8100:8100"
+      #in real world, all services get their configuration from config, so eureka depends upon config
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    mem_limit: 600m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8100/actuator/health"]
+      #start-period: 30s
+      interval: 30s
+      timeout: 15s
+      retries: 10
+  order-ms:
+    container_name: order-ms
+    build:
+      context: order-ms\.
+      dockerfile: dockerfile
+    image: inaitgaj/order-ms
+    ports:
+      - "8070:8070"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    mem_limit: 600m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8070/actuator/health"]
+      #start-period: 30s
+      interval: 1m30s
+      timeout: 15s
+      retries: 10
+
+  tracking-ms:
+    container_name: tracking-ms
+    build:
+      context: tracking-ms\.
+      dockerfile: dockerfile
+    image: inaitgaj/tracking-ms
+    ports:
+      - "8080:8080"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    mem_limit: 600m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      #start-period: 30s
+      interval: 1m30s
+      timeout: 15s
+      retries: 10
+
+#  zuul:
+#    build:
+#      context: zuul\.
+#      dockerfile: dockerfile
+#    image: inaitgaj/zuul
+#    ports:
+#    - "8060:8060"
+#    depends_on:
+#      config-server:
+#        condition: service_healthy
+#    mem_limit: 300m
+  admin-dashboard:
+    container_name: admin-dashboard
+    build:
+      context: admin-dashboard\.
+      dockerfile: dockerfile
+    image: inaitgaj/admin-dashboard
+    ports:
+    - "8040:8040"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    mem_limit: 400m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8040/actuator/health"]
+      #start-period: 30s
+      interval: 1m30s
+      timeout: 15s
+      retries: 10
+
+  hystrix-dashboard:
+    container_name: hystrix-dashboard
+    build:
+      context: hystrix-dashboard\.
+      dockerfile: dockerfile
+    image: inaitgaj/hystrix-dashboard
+    ports:
+    - "8050:8050"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    mem_limit: 400m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8050/actuator/health"]
+      #start-period: 30s
+      interval: 1m30s
+      timeout: 15s
+      retries: 10
+
