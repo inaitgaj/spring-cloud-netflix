@@ -1,2 +1,2 @@
 #name should be the microservice name for which we are creating services.
-msg : Service-B-from-config-server-dev
+name : Tracking-ms-from-config-server-docker
